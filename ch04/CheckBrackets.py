@@ -1,46 +1,47 @@
-# 코드 4.4: 스택을 이용한 괄호검사 알고리즘 (참고 파일: ch04/CheckBrackets.py)
 from ArrayStack import ArrayStack
+
 
 def checkBrackets(statement):
     stack = ArrayStack(100)
+    line_idx = 1  # 현재 라인 번호
+    string_idx = 0  # 현재 라인에서의 문자 위치
+
     for ch in statement:
-        # if ch in ('{', '[', '('):
-        # if ch in '{[(':
-        if ch=='{' or ch=='[' or ch=='(' :
-            stack.push(ch)
-        # elif ch in ('}', ']', ')'):
-        # elif ch in '}])':
-        elif ch=='}' or ch==']' or ch==')' :
-            if stack.isEmpty() :
-                return False
-            else :
-                left = stack.pop()
-                if (ch == "}" and left != "{") or \
-                   (ch == "]" and left != "[") or \
-                   (ch == ")" and left != "(") :
-                    return False
+        if ch == '\n':
+            line_idx += 1
+            string_idx = 0
+        else:
+            string_idx += 1
 
-    return stack.isEmpty()
+        if ch == '{' or ch == '[' or ch == '(':
+            stack.push((ch, line_idx, string_idx))
+
+        elif ch == '}' or ch == ']' or ch == ')':
+            if stack.isEmpty():
+                print(
+                    f"조건 2(같은 타입의 괄호에서 왼쪽 괄호가 오른쪽 괄호보다 먼저 나와야 한다)를 위배합니다. (라인 {line_idx}, 문자 {string_idx})")
+                return
+
+            left, left_line, left_string = stack.pop()
+            if (ch == '}' and left != '{') or \
+               (ch == ']' and left != '[') or \
+               (ch == ')' and left != '('):
+                print(
+                    f"조건 3(서로 다른 타입의 괄호 쌍이 서로를 교차하면 안 된다)를 위배합니다. (라인 {left_line}, 문자 {left_string})")
+                return
+
+    if not stack.isEmpty():
+        left, left_line, left_string = stack.pop()
+        print(
+            f"조건 1(왼쪽 괄호의 개수와 오른쪽 괄호의 개수가 같아야한다)를 위배합니다. (라인 {left_line}, 문자 {left_string})")
 
 
-# 테스트 프로그램
-s1 = "{ A[ (i+1) ] = 0; } "
-s2 = "if( (i==0) && (j==0)"
-s3 = "A[ ( i+1 ] ) = 0;   "
-print(s1, " ---> ", checkBrackets(s1))
-print(s2, " ---> ", checkBrackets(s2))
-print(s3, " ---> ", checkBrackets(s3))
+def check_file(fileName):
+    with open(fileName, 'r') as file:
+        python_code = file.read()
+        checkBrackets(python_code)
 
 
-# 테스트 프로그램
-filename = "ArrayStack.h"
-infile = open(filename , "r")
-str = infile.read()
-infile.close()
-print("소스파일", filename, " ---> ", checkBrackets(str))
-
-# 테스트 프로그램
-filename = "ArrayStack.h"
-with open(filename , "r") as infile :
-    str = infile.read()
-    print("소스파일", filename, " ---> ", checkBrackets(str))
+def main():
+    python_file = input("파이썬 소스 파일의 이름을 입력하세요: ")
+    check_file(python_file)
