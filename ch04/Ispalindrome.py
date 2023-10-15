@@ -19,10 +19,12 @@ def isPalindrome(text):
         else:  # 같지 않을 경우 팰린드롭이 아니므로
             return print('Not Palindrome')  # 바로 리턴하여 반복문 빠져나가기
         j += 1  # j의 인덱스 하나씩 옆으로 옮기기
-
     return print('Palindrome')  # 모든 조건에 부합하여 stack이 비었을 경우 팰린드롬이 맞으므로 맞다고 리턴
 
 
-isPalindrome('eye')  # Plaindrome
-isPalindrome('madam, I\'m Adam')  # Plaindrome
-isPalindrome('race car')  # Plaindrome
+def main():  # 프로그램 실행
+    check_text = input("팰린드롬을 확인할 문자를 알려주세요: ")  # 사용자로부터 문자열 받기
+    isPalindrome(check_text)
+
+
+main()
